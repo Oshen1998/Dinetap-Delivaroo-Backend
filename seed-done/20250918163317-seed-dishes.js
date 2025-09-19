@@ -58,7 +58,7 @@ module.exports = {
         for (let i = 0; i < 8; i++) {
           dishes.push({
             categoryId: category.id,
-            name: faker.commerce.productName(),
+            name: faker.food.dish(),
             description: faker.lorem.sentence(),
             price: parseFloat(
               faker.commerce.price({ min: 5, max: 50, dec: 2 })

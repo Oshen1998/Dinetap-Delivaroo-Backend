@@ -38,6 +38,10 @@ const { User, Restaurant, Category, Dish, Order, OrderItem, RefreshToken } = mod
 Restaurant.hasMany(Category, { foreignKey: 'restaurantId', onDelete: 'CASCADE' });
 Category.belongsTo(Restaurant, { foreignKey: 'restaurantId' });
 
+// Add this missing association
+Restaurant.hasMany(Order, { foreignKey: 'restaurantId', onDelete: 'CASCADE' });
+Order.belongsTo(Restaurant, { foreignKey: 'restaurantId' });
+
 Category.hasMany(Dish, { onDelete: 'CASCADE' });
 Dish.belongsTo(Category);
 

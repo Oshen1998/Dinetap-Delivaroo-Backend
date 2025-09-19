@@ -13,7 +13,7 @@
     "migrate": "node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:migrate",
     "drop": "node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:drop",
     "create": "node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:create",
-    "seed": "npx sequelize-cli db:seed:all",
+    "seed": "node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:seed:all",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
