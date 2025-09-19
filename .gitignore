@@ -6,3 +6,13 @@ yarn-error.log
 .env
 
 .sequelizerc
+
+# node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:migrate
+
+# node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:drop
+
+# node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:create
+
+# npx sequelize-cli seed:generate --name category-seeder - generate seeder files
+
+# npx sequelize-cli migration:generate --name user-create  - generate migration file

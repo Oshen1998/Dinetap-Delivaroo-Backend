@@ -38,6 +38,9 @@ const { User, Restaurant, Category, Dish, Order, OrderItem, RefreshToken } = mod
 Restaurant.hasMany(Category, { foreignKey: 'restaurantId', onDelete: 'CASCADE' });
 Category.belongsTo(Restaurant, { foreignKey: 'restaurantId' });
 
+Restaurant.hasMany(Order, { foreignKey: 'restaurantId', onDelete: 'CASCADE' });
+Order.belongsTo(Restaurant, { foreignKey: 'restaurantId' });
+
 Category.hasMany(Dish, { onDelete: 'CASCADE' });
 Dish.belongsTo(Category);
 
@@ -50,7 +53,6 @@ OrderItem.belongsTo(Order);
 Dish.hasMany(OrderItem);
 OrderItem.belongsTo(Dish);
 
-// Refresh token belongs to user
 User.hasMany(RefreshToken, { onDelete: 'CASCADE' });
 RefreshToken.belongsTo(User);
 

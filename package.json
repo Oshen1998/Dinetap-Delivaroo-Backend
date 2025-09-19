@@ -11,7 +11,9 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "migrate": "node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:migrate",
-    "seed": "npx sequelize-cli db:seed:all",
+    "drop": "node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:drop",
+    "create": "node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:create",
+    "seed": "node --loader ts-node/esm ./node_modules/.bin/sequelize-cli db:seed:all",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {

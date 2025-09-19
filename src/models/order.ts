@@ -1,37 +1,42 @@
-import { DataTypes, Sequelize, Model, Optional } from 'sequelize';
+import { DataTypes, Model, Sequelize, Optional } from "sequelize";
 
 interface OrderAttributes {
   id: number;
   userId: number;
-  status: 'pending' | 'completed' | 'cancelled' | 'preparing' | 'delivered';
-  total: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  restaurantId: number;
+  totalPrice: number;
+  status: "pending" | "confirmed" | "completed" | "cancelled";
 }
 
-export interface OrderCreationAttributes extends Optional<OrderAttributes, 'id' | 'status'> {}
+interface OrderCreation extends Optional<OrderAttributes, "id" | "status"> {}
 
-export class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
+export class Order extends Model<OrderAttributes, OrderCreation> implements OrderAttributes {
   public id!: number;
   public userId!: number;
-  public status!: 'pending' | 'completed' | 'cancelled' | 'preparing' | 'delivered';
-  public total!: number;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public restaurantId!: number;
+  public totalPrice!: number;
+  public status!: "pending" | "confirmed" | "completed" | "cancelled";
+
+  static associate(models: any) {
+    Order.belongsTo(models.Restaurant, { foreignKey: "restaurantId", as: "restaurant" });
+    Order.hasMany(models.OrderItem, { foreignKey: "orderId", as: "items" });
+  }
 }
 
-export function initOrder(sequelize: Sequelize) {
+export const initOrder = (sequelize: Sequelize) => {
   Order.init(
     {
       id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
       userId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
-      status: { type: DataTypes.ENUM('pending', 'completed', 'cancelled', 'preparing', 'delivered'), defaultValue: 'pending' },
-      total: { type: DataTypes.DECIMAL(10,2), allowNull: false, defaultValue: 0 }
+      restaurantId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+      totalPrice: { type: DataTypes.FLOAT, allowNull: false },
+      status: {
+        type: DataTypes.ENUM("pending", "confirmed", "completed", "cancelled"),
+        defaultValue: "pending",
+      },
     },
-    {
-      tableName: 'orders',
-      sequelize
-    }
+    { sequelize, tableName: "orders" }
   );
+
   return Order;
-}
+};
