@@ -6,6 +6,7 @@ import {
   successResponse,
 } from "../../middleware/response-handler.middleware";
 import { Dish } from "../../models/dish";
+import { ERROR_MESSAGES } from "../../common/constants";
 
 export default {
   async getAll(req: Request, res: Response) {
@@ -37,7 +38,7 @@ export default {
   async getById(req: Request, res: Response) {
     try {
       const category = await Category.findByPk(req.params.id);
-      if (!category) return notFoundErrorResponse(res, "Not Found");
+      if (!category) return notFoundErrorResponse(res);
       successResponse(res, category);
     } catch (err) {
       serverErrorResponse(res);
@@ -54,7 +55,7 @@ export default {
 
       const category = await Category.findByPk(categoryId);
       if (!category) {
-        return notFoundErrorResponse(res, "Category not found");
+        return notFoundErrorResponse(res);
       }
 
       const { rows: dishes, count } = await Dish.findAndCountAll({

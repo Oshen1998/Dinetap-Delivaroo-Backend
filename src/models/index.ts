@@ -53,7 +53,6 @@ OrderItem.belongsTo(Order);
 Dish.hasMany(OrderItem);
 OrderItem.belongsTo(Dish);
 
-// Refresh token belongs to user
 User.hasMany(RefreshToken, { onDelete: 'CASCADE' });
 RefreshToken.belongsTo(User);
 

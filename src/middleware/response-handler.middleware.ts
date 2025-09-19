@@ -1,8 +1,9 @@
 import { Response } from "express";
+import { ERROR_MESSAGES, HTTP_STATUS_CODES } from "../common/constants";
 
 
 
-export function successResponse(res: Response, data: any, message = "Success", statusCode = 200) {
+export function successResponse(res: Response, data: any, message = "SUCCESS", statusCode = HTTP_STATUS_CODES.CREATED) {
     return res.status(statusCode).json({
         success: true,
         message,
@@ -10,7 +11,7 @@ export function successResponse(res: Response, data: any, message = "Success", s
     });
 }
 
-export function badRequestResponse(res: Response, message = "Bad Request", statusCode = 400) {
+export function badRequestResponse(res: Response, message = ERROR_MESSAGES.BAD_REQUEST, statusCode = HTTP_STATUS_CODES.BAD_REQUEST) {
     return res.status(statusCode).json({
         success: false,
         message,
@@ -18,7 +19,7 @@ export function badRequestResponse(res: Response, message = "Bad Request", statu
     });
 }
 
-export function unauthorizedResponse(res: Response, message = "Unauthorized", statusCode = 401) {
+export function unauthorizedResponse(res: Response, message = ERROR_MESSAGES.UNAUTHORIZED, statusCode = HTTP_STATUS_CODES.UNAUTHORIZED) {
     return res.status(statusCode).json({
         success: false,
         message,
@@ -26,7 +27,7 @@ export function unauthorizedResponse(res: Response, message = "Unauthorized", st
     });
 }
 
-export function conflictResponse(res: Response, message = "Conflict", statusCode = 409) {
+export function conflictResponse(res: Response, message = ERROR_MESSAGES.DUPLICATE, statusCode = HTTP_STATUS_CODES.CONFLICT) {
     return res.status(statusCode).json({
         success: false,
         message,
@@ -34,14 +35,14 @@ export function conflictResponse(res: Response, message = "Conflict", statusCode
     });
 }
 
-export function serverErrorResponse(res: Response, message = "Internal Server Error", statusCode = 500) {
+export function serverErrorResponse(res: Response, message = ERROR_MESSAGES.INTERNAL_SERVER_ERROR, statusCode = HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR) {
     return res.status(statusCode).json({
         success: false,
         message,
         data: null,
     });
 }
-export function unprocessableEntityResponse(res: Response, message = "Unprocessable Entity", statusCode = 422) {
+export function unprocessableEntityResponse(res: Response, message = ERROR_MESSAGES.SERVICE_UNAVAILABLE, statusCode = HTTP_STATUS_CODES.UNPROCESSABLE_ENTITY) {
     return res.status(statusCode).json({
         success: false,
         message,
@@ -49,7 +50,7 @@ export function unprocessableEntityResponse(res: Response, message = "Unprocessa
     });
 }
 
-export function notFoundErrorResponse(res: Response, message = "Not Found Error", statusCode = 404) {
+export function notFoundErrorResponse(res: Response, message = ERROR_MESSAGES.NOT_FOUND, statusCode = HTTP_STATUS_CODES.NOT_FOUND) {
     return res.status(statusCode).json({
         success: false,
         message,

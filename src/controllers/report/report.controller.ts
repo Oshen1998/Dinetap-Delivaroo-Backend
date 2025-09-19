@@ -5,6 +5,7 @@ import { Restaurant } from "../../models/restaurant";
 import { Dish } from "../../models/dish";
 import { User } from "../../models/user";
 import {
+  badRequestResponse,
   serverErrorResponse,
   successResponse,
 } from "../../middleware/response-handler.middleware";
@@ -22,10 +23,7 @@ export default {
         const toDate = new Date(to as string);
 
         if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
-          return res.status(400).json({
-            success: false,
-            message: "Invalid date format. Please use YYYY-MM-DD format.",
-          });
+          badRequestResponse(res);
         }
 
         toDate.setHours(23, 59, 59, 999);
