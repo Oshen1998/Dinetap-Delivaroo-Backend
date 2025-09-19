@@ -3,15 +3,19 @@ import jwt from "jsonwebtoken";
 import { jwtConfig } from "../config/jwt";
 import { models } from "../models";
 
-export interface AuthRequest extends Request {
-  user: {
-    id: number;
-    email: string;
-  };
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: number;
+        email: string;
+      };
+    }
+  }
 }
 
 export const authenticate = async (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
