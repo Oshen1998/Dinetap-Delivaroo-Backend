@@ -1,9 +1,22 @@
-import { z } from 'zod';
+import { z } from "zod";
+
+export const restaurantStatusSchema = z.enum(["ACTIVE", "INACTIVE"]);
+
+export const tagArraySchema = z.array(z.string());
 
 export const createRestaurantSchema = z.object({
-  name: z.string().min(2).max(255),
-  description: z.string().max(1000).optional(),
-  address: z.string().min(5).max(512),
+  id: z.number().positive(),
+  name: z.string().min(1, "Name is required"),
+  status: restaurantStatusSchema,
+  description: z.string().nullable().optional(),
+  address: z.string().nullable().optional(),
+  currencyCode: z.string().optional(),
+  tags: tagArraySchema.optional(),
+  rate: z.number().nullable().optional(),
+  long: z.number().optional(),
+  lat: z.number().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
 export const updateRestaurantSchema = createRestaurantSchema.partial();

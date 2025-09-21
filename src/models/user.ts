@@ -1,16 +1,16 @@
-import { DataTypes, Sequelize, Model, Optional } from 'sequelize';
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
+import { DataTypes, Model, Optional, Sequelize } from "sequelize";
 
-export type UserRole = 'ADMIN' | 'CUSTOMER' | 'SUPER_ADMIN';
+export type UserRole = "ADMIN" | "CUSTOMER" | "SUPER_ADMIN";
 
-export type UserStatus = 'ACTIVE' | 'INACTIVE';
+export type UserStatus = "ACTIVE" | "INACTIVE";
 
 export interface UserAttributes {
   id: number;
   email: string;
   password: string;
   name: string;
-  phoneNumber?: string;
+  phoneNumber?: string | undefined;
   status?: UserStatus;
   role: UserRole;
   createdAt?: Date;
@@ -18,7 +18,7 @@ export interface UserAttributes {
 }
 
 export interface UserCreationAttributes
-  extends Optional<UserAttributes, 'id' | 'phoneNumber' | 'status' | 'role'> {}
+  extends Optional<UserAttributes, "id" | "phoneNumber" | "status" | "role"> {}
 
 export class User
   extends Model<UserAttributes, UserCreationAttributes>
@@ -66,18 +66,18 @@ export function initUser(sequelize: Sequelize) {
         allowNull: true,
       },
       status: {
-        type: DataTypes.ENUM<UserStatus>('ACTIVE', 'INACTIVE'),
+        type: DataTypes.ENUM<UserStatus>("ACTIVE", "INACTIVE"),
         allowNull: true,
-        defaultValue: 'ACTIVE',
+        defaultValue: "ACTIVE",
       },
       role: {
-        type: DataTypes.ENUM<UserRole>('ADMIN', 'CUSTOMER', 'SUPER_ADMIN'),
+        type: DataTypes.ENUM<UserRole>("ADMIN", "CUSTOMER", "SUPER_ADMIN"),
         allowNull: false,
-        defaultValue: 'CUSTOMER',
+        defaultValue: "CUSTOMER",
       },
     },
     {
-      tableName: 'users',
+      tableName: "users",
       sequelize,
       hooks: {
         beforeCreate: async (user: User) => {
@@ -87,13 +87,13 @@ export function initUser(sequelize: Sequelize) {
           }
         },
         beforeUpdate: async (user: User) => {
-          if (user.changed('password')) {
+          if (user.changed("password")) {
             const salt = await bcrypt.genSalt(10);
             user.password = await bcrypt.hash(user.password, salt);
           }
         },
       },
-    }
+    },
   );
   return User;
 }
