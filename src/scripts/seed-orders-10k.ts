@@ -21,18 +21,19 @@ async function seed() {
       const order = await models.Order.create({
         userId: user.id,
         status: 'completed',
-        total: 0
+        total: 0,
       });
       for (let k = 0; k < numItems; k++) {
         const dish = dishes[Math.floor(Math.random() * dishes.length)];
         const quantity = faker.number.int({ min: 1, max: 3 });
-        const price = Number(dish.price) || faker.number.int({ min: 200, max: 2000 })/100;
+        const price =
+          Number(dish.price) || faker.number.int({ min: 200, max: 2000 }) / 100;
         totalPrice += price * quantity;
         await models.OrderItem.create({
           orderId: order.id,
           dishId: dish.id,
           quantity,
-          price
+          price,
         });
       }
       order.total = totalPrice;

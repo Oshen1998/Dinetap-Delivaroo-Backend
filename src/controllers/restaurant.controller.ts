@@ -1,28 +1,29 @@
-import { Request, Response } from "express";
-import { Restaurant } from "../../models/restaurant";
+import { Request, Response } from 'express';
+
 import {
   badRequestResponse,
   notFoundErrorResponse,
   serverErrorResponse,
   successResponse,
   unprocessableEntityResponse,
-} from "../../middleware/response-handler.middleware";
+} from '../middleware/response-handler.middleware';
+import { Restaurant } from '../models/restaurant';
 import {
   createRestaurantSchema,
   updateRestaurantSchema,
-} from "../../validations/restaurant.validation";
+} from '../validations/restaurant.validation';
 
 export default {
   async getAll(req: Request, res: Response) {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
+      const page = parseInt(req.query['page'] as string) || 1;
+      const limit = parseInt(req.query['limit'] as string) || 10;
       const offset = (page - 1) * limit;
 
       const { rows: restaurants, count } = await Restaurant.findAndCountAll({
         limit,
         offset,
-        order: [["createdAt", "DESC"]],
+        order: [['createdAt', 'DESC']],
       });
 
       successResponse(res, {
@@ -41,11 +42,11 @@ export default {
 
   async getById(req: Request, res: Response) {
     try {
-      const restaurant = await Restaurant.findByPk(req.params.id);
+      const restaurant = await Restaurant.findByPk(req.params['id']);
       if (!restaurant) return notFoundErrorResponse(res);
-      successResponse(res, restaurant);
+      return successResponse(res, restaurant);
     } catch (err) {
-      serverErrorResponse(res, "Failed to fetch restaurant");
+      return serverErrorResponse(res, 'Failed to fetch restaurant');
     }
   },
 
@@ -60,11 +61,11 @@ export default {
       const restaurant = await Restaurant.create({
         name,
         address,
-        description,
+        description: description ?? null,
       });
-      successResponse(res, restaurant, "Successfully Created!");
+      return successResponse(res, restaurant, 'Successfully Created!');
     } catch (err) {
-      unprocessableEntityResponse(res);
+      return unprocessableEntityResponse(res);
     }
   },
 
@@ -75,20 +76,20 @@ export default {
       if (!parsed.success)
         return badRequestResponse(res, parsed.error.toString());
 
-      const restaurant = await Restaurant.findByPk(req.params.id);
+      const restaurant = await Restaurant.findByPk(req.params['id']);
 
-      if (!restaurant) return notFoundErrorResponse(res, "Not Found");
+      if (!restaurant) return notFoundErrorResponse(res, 'Not Found');
       await restaurant.update(req.body);
-      successResponse(res, restaurant);
+      return successResponse(res, restaurant);
     } catch (err) {
-      unprocessableEntityResponse(res);
+      return unprocessableEntityResponse(res);
     }
   },
 
   async remove(req: Request, res: Response) {
     try {
-      const restaurant = await Restaurant.findByPk(req.params.id);
-      if (!restaurant) return notFoundErrorResponse(res, "Not Found");
+      const restaurant = await Restaurant.findByPk(req.params['id']);
+      if (!restaurant) return notFoundErrorResponse(res, 'Not Found');
       await restaurant.destroy();
       res.status(204).send();
     } catch (err) {

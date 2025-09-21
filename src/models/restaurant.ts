@@ -9,9 +9,13 @@ interface RestaurantAttributes {
   updatedAt?: Date;
 }
 
-export interface RestaurantCreationAttributes extends Optional<RestaurantAttributes, 'id'> {}
+export interface RestaurantCreationAttributes
+  extends Optional<RestaurantAttributes, 'id'> {}
 
-export class Restaurant extends Model<RestaurantAttributes, RestaurantCreationAttributes> implements RestaurantAttributes {
+export class Restaurant
+  extends Model<RestaurantAttributes, RestaurantCreationAttributes>
+  implements RestaurantAttributes
+{
   public id!: number;
   public name!: string;
   public description?: string | null;
@@ -24,14 +28,18 @@ export class Restaurant extends Model<RestaurantAttributes, RestaurantCreationAt
 export function initRestaurant(sequelize: Sequelize) {
   Restaurant.init(
     {
-      id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
+      id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        autoIncrement: true,
+        primaryKey: true,
+      },
       name: { type: DataTypes.STRING(255), allowNull: false },
       description: { type: DataTypes.TEXT, allowNull: true },
-      address: { type: DataTypes.STRING(512), allowNull: true }
+      address: { type: DataTypes.STRING(512), allowNull: true },
     },
     {
       tableName: 'restaurants',
-      sequelize
+      sequelize,
     }
   );
   return Restaurant;

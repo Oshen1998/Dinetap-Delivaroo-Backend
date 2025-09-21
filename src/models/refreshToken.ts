@@ -12,9 +12,13 @@ interface RefreshTokenAttributes {
   expiresAt: Date;
 }
 
-export interface RefreshTokenCreationAttributes extends Optional<RefreshTokenAttributes, 'id'> {}
+export interface RefreshTokenCreationAttributes
+  extends Optional<RefreshTokenAttributes, 'id'> {}
 
-export class RefreshToken extends Model<RefreshTokenAttributes, RefreshTokenCreationAttributes> implements RefreshTokenAttributes {
+export class RefreshToken
+  extends Model<RefreshTokenAttributes, RefreshTokenCreationAttributes>
+  implements RefreshTokenAttributes
+{
   public id!: number;
   public hashedToken!: string;
   public userId!: number;
@@ -43,32 +47,32 @@ export function initRefreshToken(sequelize: Sequelize) {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
       },
       hashedToken: {
         type: DataTypes.STRING(512),
-        allowNull: false
+        allowNull: false,
       },
       userId: {
         type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
+        allowNull: false,
       },
       revokedAt: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: true,
       },
       replacedByToken: {
         type: DataTypes.STRING(512),
-        allowNull: true
+        allowNull: true,
       },
       expiresAt: {
         type: DataTypes.DATE,
-        allowNull: false
-      }
+        allowNull: false,
+      },
     },
     {
       tableName: 'refresh_tokens',
-      sequelize
+      sequelize,
     }
   );
   return RefreshToken;

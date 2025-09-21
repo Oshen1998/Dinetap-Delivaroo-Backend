@@ -1,18 +1,14 @@
-import { Request, Response } from "express";
-import { Op } from "sequelize";
-import { Order } from "../../models/order";
-import { Restaurant } from "../../models/restaurant";
-import { Dish } from "../../models/dish";
-import { User } from "../../models/user";
+import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import {
   badRequestResponse,
   serverErrorResponse,
   successResponse,
-} from "../../middleware/response-handler.middleware";
-
+} from '../middleware/response-handler.middleware';
+import { Order } from '../models/order';
+import { Restaurant } from '../models/restaurant';
 
 export default {
-
   async salesReport(req: Request, res: Response) {
     try {
       const { from, to } = req.query;
@@ -36,26 +32,26 @@ export default {
       const report = await Order.findAll({
         where,
         attributes: [
-          "restaurantId",
+          'restaurantId',
           [
-            Order.sequelize!.fn("COUNT", Order.sequelize!.col("Order.id")),
-            "totalOrders",
+            Order.sequelize!.fn('COUNT', Order.sequelize!.col('Order.id')),
+            'totalOrders',
           ],
           [
             Order.sequelize!.fn(
-              "SUM",
-              Order.sequelize!.col("Order.totalPrice")
+              'SUM',
+              Order.sequelize!.col('Order.totalPrice')
             ),
-            "totalRevenue",
+            'totalRevenue',
           ],
         ],
         include: [
           {
             model: Restaurant,
-            attributes: ["id", "name"],
+            attributes: ['id', 'name'],
           },
         ],
-        group: ["Order.restaurantId", "Restaurant.id"],
+        group: ['Order.restaurantId', 'Restaurant.id'],
       });
 
       successResponse(res, report);
@@ -63,6 +59,4 @@ export default {
       serverErrorResponse(res);
     }
   },
-
-
 };

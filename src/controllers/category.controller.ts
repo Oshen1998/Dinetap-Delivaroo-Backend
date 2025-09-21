@@ -1,24 +1,24 @@
-import { Request, Response } from "express";
-import { Category } from "../../models/category";
+import { Request, Response } from 'express';
 import {
+  badRequestResponse,
   notFoundErrorResponse,
   serverErrorResponse,
   successResponse,
-} from "../../middleware/response-handler.middleware";
-import { Dish } from "../../models/dish";
-import { ERROR_MESSAGES } from "../../common/constants";
+} from '../middleware/response-handler.middleware';
+import { Category } from '../models/category';
+import { Dish } from '../models/dish';
 
 export default {
   async getAll(req: Request, res: Response) {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
+      const page = parseInt(req.query['page'] as string) || 1;
+      const limit = parseInt(req.query['limit'] as string) || 10;
       const offset = (page - 1) * limit;
 
       const { rows: categories, count } = await Category.findAndCountAll({
         limit,
         offset,
-        order: [["createdAt", "DESC"]],
+        order: [['createdAt', 'DESC']],
       });
 
       successResponse(res, {
@@ -32,37 +32,44 @@ export default {
       });
     } catch (err) {
       serverErrorResponse(res);
+      return;
     }
   },
 
   async getById(req: Request, res: Response) {
     try {
-      const category = await Category.findByPk(req.params.id);
+      const category = await Category.findByPk(req.params['id']);
       if (!category) return notFoundErrorResponse(res);
       successResponse(res, category);
+      return;
     } catch (err) {
       serverErrorResponse(res);
+      return;
     }
   },
 
   async getCategoryDishes(req: Request, res: Response) {
     try {
-      const categoryId = parseInt(req.params.id);
+      const categoryId = req.params['id'];
+      if (!categoryId) {
+        return badRequestResponse(res, 'ID is required');
+      }
 
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
+      const page = parseInt(req.query['page'] as string) || 1;
+      const limit = parseInt(req.query['limit'] as string) || 10;
       const offset = (page - 1) * limit;
 
       const category = await Category.findByPk(categoryId);
       if (!category) {
-        return notFoundErrorResponse(res);
+        notFoundErrorResponse(res);
+        return;
       }
 
       const { rows: dishes, count } = await Dish.findAndCountAll({
         where: { categoryId },
         limit,
         offset,
-        order: [["createdAt", "DESC"]],
+        order: [['createdAt', 'DESC']],
       });
 
       successResponse(res, {
@@ -75,8 +82,11 @@ export default {
           totalPages: Math.ceil(count / limit),
         },
       });
+
+      return;
     } catch (err) {
       serverErrorResponse(res);
+      return;
     }
   },
 };
