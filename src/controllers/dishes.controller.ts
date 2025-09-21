@@ -1,10 +1,22 @@
 import { Request, Response } from 'express';
 import {
+  badRequestResponse,
   notFoundErrorResponse,
   serverErrorResponse,
   successResponse,
+  unprocessableEntityResponse,
 } from '../middleware/response-handler.middleware';
-import { Dish } from '../models/dish';
+import {
+  allDishes,
+  createDish,
+  deleteDish,
+  findDishById,
+  updateDish,
+} from '../services/dish.service';
+import {
+  createDishSchema,
+  updateDishSchema,
+} from '../validations/dish.validation';
 
 export default {
   async getAll(req: Request, res: Response) {
@@ -13,10 +25,7 @@ export default {
       const limit = parseInt(req.query['size'] as string) || 20;
       const offset = (page - 1) * limit;
 
-      const dishes = await Dish.findAll({
-        limit,
-        offset,
-      });
+      const dishes = await allDishes(limit, offset);
 
       successResponse(res, {
         dishes,
@@ -29,13 +38,96 @@ export default {
     }
   },
 
-  async getById(req: Request, res: Response) {
+  async createNewDish(req: Request, res: Response) {
     try {
-      const dish = await Dish.findByPk(req.params['id']);
-      if (!dish) return notFoundErrorResponse(res);
-      return successResponse(res, dish);
+      const parsed = createDishSchema.safeParse(req.body);
+
+      if (!parsed.success) {
+        return badRequestResponse(res, parsed.error.errors.toString());
+      }
+
+      const newDish = await createDish(parsed.data);
+      successResponse(res, newDish, 'Dish successfully created!');
+      return;
     } catch (err) {
-      return serverErrorResponse(res);
+      unprocessableEntityResponse(res);
+      return;
+    }
+  },
+
+  async getDishById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return badRequestResponse(res, 'Dish ID is required.');
+      }
+
+      const dish = await findDishById(id);
+
+      if (!dish) {
+        return notFoundErrorResponse(res, 'Dish not found.');
+      }
+
+      successResponse(res, dish);
+      return;
+    } catch (err) {
+      unprocessableEntityResponse(res);
+      return;
+    }
+  },
+
+  async updateDishDetails(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return badRequestResponse(res, 'Dish ID is required.');
+      }
+
+      const parsed = updateDishSchema.safeParse(req.body);
+
+      if (!parsed.success) {
+        return badRequestResponse(res, parsed.error.errors.toString());
+      }
+
+      const dish = await findDishById(id);
+      if (!dish) {
+        return notFoundErrorResponse(res, 'Dish not found.');
+      }
+
+      const updatedDish = await updateDish(parsed.data, id);
+      successResponse(res, updatedDish);
+      return;
+    } catch (err) {
+      unprocessableEntityResponse(res);
+      return;
+    }
+  },
+
+  async deleteDishById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return badRequestResponse(res, 'Dish ID is required.');
+      }
+
+      const dish = await findDishById(id);
+      if (!dish) {
+        return notFoundErrorResponse(res, 'Dish not found.');
+      }
+
+      const deleted = await deleteDish(id);
+      if (deleted[0] === 0) {
+        return notFoundErrorResponse(res, 'Failed to delete dish.');
+      }
+
+      successResponse(res, null, 'Dish successfully deleted.');
+      return;
+    } catch (err) {
+      unprocessableEntityResponse(res);
+      return;
     }
   },
 };

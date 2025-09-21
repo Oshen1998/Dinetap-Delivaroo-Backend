@@ -1,7 +1,7 @@
-import { DataTypes, Model, Optional, Sequelize } from "sequelize";
+import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 
 type TagArray = string[];
-export type RestaurantStatus = "ACTIVE" | "INACTIVE";
+export type RestaurantStatus = 'ACTIVE' | 'INACTIVE';
 
 interface RestaurantAttributes {
   id: number;
@@ -22,17 +22,17 @@ interface RestaurantAttributes {
 export interface RestaurantCreationAttributes
   extends Optional<
     RestaurantAttributes,
-    | "id"
-    | "description"
-    | "address"
-    | "currencyCode"
-    | "tags"
-    | "rate"
-    | "createdAt"
-    | "updatedAt"
-    | "status"
-    | "long"
-    | "lat"
+    | 'id'
+    | 'description'
+    | 'address'
+    | 'currencyCode'
+    | 'tags'
+    | 'rate'
+    | 'createdAt'
+    | 'updatedAt'
+    | 'status'
+    | 'long'
+    | 'lat'
   > {}
 
 export class Restaurant
@@ -69,9 +69,9 @@ export function initRestaurant(sequelize: Sequelize) {
         allowNull: true,
       },
       status: {
-        type: DataTypes.ENUM<RestaurantStatus>("ACTIVE", "INACTIVE"),
+        type: DataTypes.ENUM<RestaurantStatus>('ACTIVE', 'INACTIVE'),
         allowNull: true,
-        defaultValue: "ACTIVE",
+        defaultValue: 'ACTIVE',
       },
       tags: {
         type: DataTypes.JSON,
@@ -92,10 +92,10 @@ export function initRestaurant(sequelize: Sequelize) {
       },
     },
     {
-      tableName: "restaurants",
+      tableName: 'restaurants',
       sequelize,
-      modelName: "Restaurant",
-    },
+      modelName: 'Restaurant',
+    }
   );
   return Restaurant;
 }

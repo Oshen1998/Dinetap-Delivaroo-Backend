@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import { ERROR_MESSAGES } from "../common/constants";
-import { jwtConfig } from "../config/jwt";
-import { models } from "../models";
-import { User, UserRole } from "../models/user";
+import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import { ERROR_MESSAGES } from '../common/constants';
+import { jwtConfig } from '../config/jwt';
+import { models } from '../models';
+import { User, UserRole } from '../models/user';
 import {
   unauthorizedResponse,
   unprocessableEntityResponse,
-} from "./response-handler.middleware";
+} from './response-handler.middleware';
 
 declare global {
   namespace Express {
@@ -23,15 +23,15 @@ declare global {
 export const authenticate = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const token = req.headers['authorization']?.split(' ')[1];
   if (!token) return unauthorizedResponse(res, ERROR_MESSAGES.MISSING_TOKEN);
 
   try {
     const payload = jwt.verify(
       token,
-      jwtConfig.accessSecret || "",
+      jwtConfig.accessSecret || ''
     ) as jwt.JwtPayload;
     const user = await models.User.findByPk(payload.sub);
     if (!user)
@@ -48,7 +48,7 @@ export const authenticate = async (
 export const authorization = (allowedRoles: UserRole[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return unauthorizedResponse(res, "Authentication is required.");
+      return unauthorizedResponse(res, 'Authentication is required.');
     }
 
     const userRole = (req.user as User).role;
@@ -56,7 +56,7 @@ export const authorization = (allowedRoles: UserRole[]) => {
     if (!userRole || !allowedRoles.includes(userRole)) {
       return unauthorizedResponse(
         res,
-        "You do not have the required permissions to access this resource.",
+        'You do not have the required permissions to access this resource.'
       );
     }
     next();

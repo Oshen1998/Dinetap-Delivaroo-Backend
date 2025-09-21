@@ -1,12 +1,12 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-export const restaurantStatusSchema = z.enum(["ACTIVE", "INACTIVE"]);
+export const restaurantStatusSchema = z.enum(['ACTIVE', 'INACTIVE']);
 
 export const tagArraySchema = z.array(z.string());
 
 export const createRestaurantSchema = z.object({
   id: z.number().positive(),
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, 'Name is required'),
   status: restaurantStatusSchema,
   description: z.string().nullable().optional(),
   address: z.string().nullable().optional(),

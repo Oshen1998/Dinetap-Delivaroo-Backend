@@ -1,5 +1,5 @@
-import { models } from "../models";
-import { Restaurant, RestaurantCreationAttributes } from "../models/restaurant";
+import { models } from '../models';
+import { Restaurant, RestaurantCreationAttributes } from '../models/restaurant';
 
 export const createRestaurant = async (body: RestaurantCreationAttributes) => {
   return await models.Restaurant.create({
@@ -13,7 +13,7 @@ export const findRestaurantById = async (id: string | number) => {
 
 export const updateRestaurant = async (
   body: Restaurant,
-  id: string | number,
+  id: string | number
 ) => {
   return await models.Restaurant.update(body, {
     where: { id },
@@ -22,9 +22,9 @@ export const updateRestaurant = async (
 
 export const deleteRestaurant = async (id: string | number) => {
   return await models.Restaurant.update(
-    { status: "INACTIVE" },
+    { status: 'INACTIVE' },
     {
       where: { id },
-    },
+    }
   );
 };

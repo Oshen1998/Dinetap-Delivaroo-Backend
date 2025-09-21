@@ -22,10 +22,9 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
+    "noUncheckedIndexedAccess": false,
     "allowUnusedLabels": false,
-    "allowUnreachableCode": false,
-    "baseUrl": "./src"
+    "allowUnreachableCode": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"]

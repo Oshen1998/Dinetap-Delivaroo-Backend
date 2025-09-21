@@ -13,3 +13,11 @@ export function msFromStr(s: string) {
       return parseInt(s, 10);
   }
 }
+
+export const removeUndefined = <T extends Record<string, any>>(
+  obj: T
+): Partial<T> => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, value]) => value !== undefined)
+  ) as Partial<T>;
+};
