@@ -1,5 +1,5 @@
-import { Op } from "sequelize";
-import { models } from "../models";
+import { Op } from 'sequelize';
+import { models } from '../models';
 
 export const findUserByEmail = async (email: string) => {
   return await models.User.findOne({ where: { email } });
@@ -30,15 +30,15 @@ export const updateUserDetails = async (
 
 export const userDeleted = async (userId: number) => {
   return await models.User.update(
-    { status: "INACTIVE" },
-    { where: { id: userId, status: { [Op.ne]: "INACTIVE" } } }
+    { status: 'INACTIVE' },
+    { where: { id: userId, status: { [Op.ne]: 'INACTIVE' } } }
   );
 };
 
 export const getAllActiveMembers = async () => {
   return models.User.findAll({
     where: {
-      status: "ACTIVE",
+      status: 'ACTIVE',
     },
   });
 };

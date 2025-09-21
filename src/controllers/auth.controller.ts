@@ -1,28 +1,28 @@
-import { Request, Response } from "express";
-import { loginSchema, signupSchema } from "../validations/auth.validation";
-import { models } from "../models";
+import { Request, Response } from 'express';
+import { loginSchema, signupSchema } from '../validations/auth.validation';
+import { models } from '../models';
 import {
   generateAccessToken,
   generateRefreshToken,
   rotateRefreshToken,
-} from "../services/token.service";
+} from '../services/token.service';
 import {
   badRequestResponse,
   conflictResponse,
   serverErrorResponse,
   successResponse,
   unauthorizedResponse,
-} from "../middleware/response-handler.middleware";
-import { ERROR_MESSAGES } from "../common/constants";
-import { IRefreshTokenResult } from "../common/interfaces/auth.interface";
-import { tokenSchema } from "../validations/token.validations";
+} from '../middleware/response-handler.middleware';
+import { ERROR_MESSAGES } from '../common/constants';
+import { IRefreshTokenResult } from '../common/interfaces/auth.interface';
+import { tokenSchema } from '../validations/token.validations';
 import {
   createUser,
   findUserByEmail,
   getAllActiveMembers,
   updateUserDetails,
   userDeleted,
-} from "../services/auth.service";
+} from '../services/auth.service';
 
 export const userRegistration = async (req: Request, res: Response) => {
   const parsed = signupSchema.safeParse(req.body);
@@ -48,10 +48,7 @@ export const userRegistration = async (req: Request, res: Response) => {
     if (error instanceof Error) {
       serverErrorResponse(res, error.message);
     } else {
-      serverErrorResponse(
-        res,
-        "An unknown error occurred during registration"
-      );
+      serverErrorResponse(res, 'An unknown error occurred during registration');
     }
   }
 };
@@ -78,10 +75,7 @@ export const login = async (req: Request, res: Response) => {
     if (error instanceof Error) {
       serverErrorResponse(res, error.message);
     } else {
-      serverErrorResponse(
-        res,
-        "An unknown error occurred during login."
-      );
+      serverErrorResponse(res, 'An unknown error occurred during login.');
     }
   }
 };
@@ -95,10 +89,7 @@ export const softDeleteUserById = async (req: Request, res: Response) => {
     if (error instanceof Error) {
       serverErrorResponse(res, error.message);
     } else {
-      serverErrorResponse(
-        res,
-        "An unknown error occurred during deleting."
-      );
+      serverErrorResponse(res, 'An unknown error occurred during deleting.');
     }
   }
 };
@@ -112,31 +103,33 @@ export const updateUserDetailsById = async (req: Request, res: Response) => {
   const { email, name, phoneNumber } = parsed.data;
 
   try {
-    const [affectedRows] = await updateUserDetails(req.params.id, email, name, phoneNumber)
+    const [affectedRows] = await updateUserDetails(
+      req.params.id,
+      email,
+      name,
+      phoneNumber
+    );
     return affectedRows;
+  } catch (error) {
+    if (error instanceof Error) {
+      serverErrorResponse(res, error.message);
+    } else {
+      serverErrorResponse(res, 'An unknown error occurred during updating.');
+    }
+  }
+};
+
+export const getAllActiveUsers = async (req: Request, res: Response) => {
+  try {
+    const activeUsers = await getAllActiveMembers();
+    return activeUsers;
   } catch (error) {
     if (error instanceof Error) {
       serverErrorResponse(res, error.message);
     } else {
       serverErrorResponse(
         res,
-        "An unknown error occurred during updating."
-      );
-    }
-  }
-};
-
-export const getAllActiveUsers = async (req: Request, res: Response)=> {
-  try {
-    const activeUsers = await getAllActiveMembers();
-    return activeUsers;
-  } catch (error) {
-   if (error instanceof Error) {
-      serverErrorResponse(res, error.message);
-    } else {
-      serverErrorResponse(
-        res,
-        "An unknown error occurred during fetching active users."
+        'An unknown error occurred during fetching active users.'
       );
     }
   }
@@ -166,7 +159,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     } else {
       serverErrorResponse(
         res,
-        "An unknown error occurred during token refresh."
+        'An unknown error occurred during token refresh.'
       );
     }
   }

@@ -17,9 +17,13 @@ export interface UserAttributes {
   updatedAt?: Date;
 }
 
-export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'phoneNumber' | 'status' | 'role'> {}
+export interface UserCreationAttributes
+  extends Optional<UserAttributes, 'id' | 'phoneNumber' | 'status' | 'role'> {}
 
-export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+export class User
+  extends Model<UserAttributes, UserCreationAttributes>
+  implements UserAttributes
+{
   public id!: number;
   public email!: string;
   public password!: string;
@@ -42,35 +46,35 @@ export function initUser(sequelize: Sequelize) {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
       },
       email: {
         type: DataTypes.STRING(255),
         allowNull: false,
-        unique: true
+        unique: true,
       },
       password: {
         type: DataTypes.STRING(255),
-        allowNull: false
+        allowNull: false,
       },
       name: {
         type: DataTypes.STRING(255),
-        allowNull: false
+        allowNull: false,
       },
       phoneNumber: {
-        type: DataTypes.STRING(20), 
-        allowNull: true 
+        type: DataTypes.STRING(20),
+        allowNull: true,
       },
       status: {
         type: DataTypes.ENUM<UserStatus>('ACTIVE', 'INACTIVE'),
         allowNull: true,
-        defaultValue: 'ACTIVE'
+        defaultValue: 'ACTIVE',
       },
       role: {
         type: DataTypes.ENUM<UserRole>('ADMIN', 'CUSTOMER', 'SUPER_ADMIN'),
         allowNull: false,
-        defaultValue: 'CUSTOMER'
-      }
+        defaultValue: 'CUSTOMER',
+      },
     },
     {
       tableName: 'users',
@@ -87,8 +91,8 @@ export function initUser(sequelize: Sequelize) {
             const salt = await bcrypt.genSalt(10);
             user.password = await bcrypt.hash(user.password, salt);
           }
-        }
-      }
+        },
+      },
     }
   );
   return User;

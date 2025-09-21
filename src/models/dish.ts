@@ -18,9 +18,13 @@ interface DishAttributes {
   isPopular: boolean;
 }
 
-export interface DishCreationAttributes extends Optional<DishAttributes, 'id' | 'tags' | 'isAvailable'> {}
+export interface DishCreationAttributes
+  extends Optional<DishAttributes, 'id' | 'tags' | 'isAvailable'> {}
 
-export class Dish extends Model<DishAttributes, DishCreationAttributes> implements DishAttributes {
+export class Dish
+  extends Model<DishAttributes, DishCreationAttributes>
+  implements DishAttributes
+{
   public id!: number;
   public categoryId!: number;
   public name!: string;
@@ -37,31 +41,31 @@ export class Dish extends Model<DishAttributes, DishCreationAttributes> implemen
 export function initDish(sequelize: Sequelize) {
   Dish.init(
     {
-      id: { 
-        type: DataTypes.INTEGER.UNSIGNED, 
-        autoIncrement: true, 
-        primaryKey: true 
+      id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        autoIncrement: true,
+        primaryKey: true,
       },
-      categoryId: { 
-        type: DataTypes.INTEGER.UNSIGNED, 
-        allowNull: false 
+      categoryId: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
       },
-      name: { 
-        type: DataTypes.STRING(255), 
-        allowNull: false 
+      name: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
       },
-      description: { 
-        type: DataTypes.TEXT, 
-        allowNull: true 
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
       },
-      price: { 
-        type: DataTypes.DECIMAL(10, 2), 
-        allowNull: false, 
-        defaultValue: 0 
+      price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0,
       },
-      image: { 
-        type: DataTypes.STRING(1024), 
-        allowNull: true 
+      image: {
+        type: DataTypes.STRING(1024),
+        allowNull: true,
       },
       tags: {
         type: DataTypes.JSON,
@@ -71,12 +75,12 @@ export function initDish(sequelize: Sequelize) {
       isAvailable: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
-        defaultValue: false
+        defaultValue: false,
       },
       isPopular: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
-        defaultValue: false
+        defaultValue: false,
       },
     },
     {
@@ -84,12 +88,12 @@ export function initDish(sequelize: Sequelize) {
       sequelize,
       indexes: [
         {
-          fields: ['categoryId']
+          fields: ['categoryId'],
         },
         {
-          fields: ['name']
-        }
-      ]
+          fields: ['name'],
+        },
+      ],
     }
   );
   return Dish;

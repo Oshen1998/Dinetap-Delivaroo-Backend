@@ -17,10 +17,9 @@ export const sequelize = new Sequelize(
     host: process.env.DB_HOST || '127.0.0.1',
     port: Number(process.env.DB_PORT || 3306),
     dialect: 'mysql',
-    logging: false
+    logging: false,
   }
 );
-
 
 export const models = {
   User: initUser(sequelize),
@@ -29,13 +28,17 @@ export const models = {
   Dish: initDish(sequelize),
   Order: initOrder(sequelize),
   OrderItem: initOrderItem(sequelize),
-  RefreshToken: initRefreshToken(sequelize)
+  RefreshToken: initRefreshToken(sequelize),
 };
 
 // associations
-const { User, Restaurant, Category, Dish, Order, OrderItem, RefreshToken } = models;
+const { User, Restaurant, Category, Dish, Order, OrderItem, RefreshToken } =
+  models;
 
-Restaurant.hasMany(Category, { foreignKey: 'restaurantId', onDelete: 'CASCADE' });
+Restaurant.hasMany(Category, {
+  foreignKey: 'restaurantId',
+  onDelete: 'CASCADE',
+});
 Category.belongsTo(Restaurant, { foreignKey: 'restaurantId' });
 
 Restaurant.hasMany(Order, { foreignKey: 'restaurantId', onDelete: 'CASCADE' });

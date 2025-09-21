@@ -12,14 +12,22 @@ const createRandomToken = () => {
 };
 
 export const generateAccessToken = async (user: User) => {
-  const options: SignOptions = { expiresIn: Number(jwtConfig.accessExpiresIn) || '15m' };
-  return jwt.sign({ sub: user.id, email: user.email }, jwtConfig.accessSecret || 'jwt_secrete', options);
+  const options: SignOptions = {
+    expiresIn: Number(jwtConfig.accessExpiresIn) || '15m',
+  };
+  return jwt.sign(
+    { sub: user.id, email: user.email },
+    jwtConfig.accessSecret || 'jwt_secrete',
+    options
+  );
 };
 
 export const generateRefreshToken = async (user: User) => {
   const token = createRandomToken();
   const hashed = RefreshToken.hashToken(token);
-  const expiresAt = new Date(Date.now() + msFromStr(jwtConfig.refreshExpiresIn));
+  const expiresAt = new Date(
+    Date.now() + msFromStr(jwtConfig.refreshExpiresIn)
+  );
   await models.RefreshToken.create({
     hashedToken: hashed,
     userId: user.id,
@@ -28,10 +36,11 @@ export const generateRefreshToken = async (user: User) => {
   return token;
 };
 
-
 export const rotateRefreshToken = async (token: string) => {
   const hashed = RefreshToken.hashToken(token);
-  const existing = await models.RefreshToken.findOne({ where: { hashedToken: hashed } });
+  const existing = await models.RefreshToken.findOne({
+    where: { hashedToken: hashed },
+  });
 
   if (!existing) {
     // token reuse detected: revoke all refresh tokens for user as precaution
@@ -45,11 +54,13 @@ export const rotateRefreshToken = async (token: string) => {
 
   // create new refresh token and mark old revoked
   const user = await models.User.findByPk(existing.userId);
-  if (!user) return { error: ERROR_MESSAGES.OPERATION_FAILED};
+  if (!user) return { error: ERROR_MESSAGES.OPERATION_FAILED };
 
   const newToken = createRandomToken();
   const hashedNew = RefreshToken.hashToken(newToken);
-  const expiresAt = new Date(Date.now() + msFromStr(jwtConfig.refreshExpiresIn));
+  const expiresAt = new Date(
+    Date.now() + msFromStr(jwtConfig.refreshExpiresIn)
+  );
 
   await models.RefreshToken.create({
     hashedToken: hashedNew,
@@ -65,6 +76,3 @@ export const rotateRefreshToken = async (token: string) => {
 
   return { accessToken, refreshToken: newToken, user };
 };
-
-
-
