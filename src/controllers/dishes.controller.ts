@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { Dish } from "../../models/dish";
 import {
   notFoundErrorResponse,
   serverErrorResponse,
   successResponse,
-} from "../../middleware/response-handler.middleware";
+} from "../middleware/response-handler.middleware";
+import { Dish } from "../models/dish";
 
 export default {
   async getAll(req: Request, res: Response) {

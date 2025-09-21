@@ -1,14 +1,9 @@
 import { Request, Response } from "express";
 import { Op } from "sequelize";
-import { Order } from "../../models/order";
-import { Restaurant } from "../../models/restaurant";
-import { Dish } from "../../models/dish";
-import { User } from "../../models/user";
-import {
-  badRequestResponse,
-  serverErrorResponse,
-  successResponse,
-} from "../../middleware/response-handler.middleware";
+import { badRequestResponse, serverErrorResponse, successResponse } from "../middleware/response-handler.middleware";
+import { Order } from "../models/order";
+import { Restaurant } from "../models/restaurant";
+
 
 
 export default {

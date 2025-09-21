@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
-import { Category } from "../../models/category";
 import {
   notFoundErrorResponse,
   serverErrorResponse,
   successResponse,
-} from "../../middleware/response-handler.middleware";
-import { Dish } from "../../models/dish";
-import { ERROR_MESSAGES } from "../../common/constants";
+} from "../middleware/response-handler.middleware";
+import { Category } from "../models/category";
+import { Dish } from "../models/dish";
 
 export default {
   async getAll(req: Request, res: Response) {

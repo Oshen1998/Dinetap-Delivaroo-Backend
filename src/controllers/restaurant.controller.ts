@@ -1,16 +1,8 @@
 import { Request, Response } from "express";
-import { Restaurant } from "../../models/restaurant";
-import {
-  badRequestResponse,
-  notFoundErrorResponse,
-  serverErrorResponse,
-  successResponse,
-  unprocessableEntityResponse,
-} from "../../middleware/response-handler.middleware";
-import {
-  createRestaurantSchema,
-  updateRestaurantSchema,
-} from "../../validations/restaurant.validation";
+
+import { badRequestResponse, notFoundErrorResponse, serverErrorResponse, successResponse, unprocessableEntityResponse } from "../middleware/response-handler.middleware";
+import { createRestaurantSchema, updateRestaurantSchema } from "../validations/restaurant.validation";
+import { Restaurant } from "../models/restaurant";
 
 export default {
   async getAll(req: Request, res: Response) {
