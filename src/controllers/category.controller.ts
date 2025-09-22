@@ -138,6 +138,7 @@ export default {
     }
   },
 
+  // This endpoint showcase the Hard Delete
   async deleteCategoryDetails(req: Request, res: Response) {
     try {
       const id = req.params['id'];

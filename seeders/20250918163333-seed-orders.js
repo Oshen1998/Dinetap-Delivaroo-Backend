@@ -1,5 +1,5 @@
-"use strict";
-const { faker } = require("@faker-js/faker");
+'use strict';
+const { faker } = require('@faker-js/faker');
 
 module.exports = {
   async up(queryInterface) {
@@ -8,20 +8,20 @@ module.exports = {
     try {
       // Fetch valid users, dishes, and restaurants
       const users = await queryInterface.sequelize.query(
-        "SELECT id FROM users;",
+        'SELECT id FROM users;',
         { type: queryInterface.sequelize.QueryTypes.SELECT, transaction }
       );
       const dishes = await queryInterface.sequelize.query(
-        "SELECT id, price, categoryId FROM dishes;",
+        'SELECT id, price, categoryId FROM dishes;',
         { type: queryInterface.sequelize.QueryTypes.SELECT, transaction }
       );
       const restaurants = await queryInterface.sequelize.query(
-        "SELECT id FROM restaurants;",
+        'SELECT id FROM restaurants;',
         { type: queryInterface.sequelize.QueryTypes.SELECT, transaction }
       );
 
       if (!users.length || !dishes.length || !restaurants.length) {
-        console.warn("⚠️ Skipping: No users, dishes, or restaurants found.");
+        console.warn('⚠️ Skipping: No users, dishes, or restaurants found.');
         await transaction.rollback();
         return;
       }
@@ -43,27 +43,27 @@ module.exports = {
           const userId = faker.helpers.arrayElement(userIds);
           const restaurantId = faker.helpers.arrayElement(restaurantIds);
           const status = faker.helpers.arrayElement([
-            "completed",
-            "pending",
-            "cancelled",
+            'completed',
+            'pending',
+            'cancelled',
           ]);
 
           orders.push({
             userId,
             restaurantId,
             status,
-            totalPrice: 0, // update later
+            price: 0, // update later
             createdAt: new Date(),
             updatedAt: new Date(),
           });
         }
 
         // Insert this batch of orders
-        await queryInterface.bulkInsert("orders", orders, { transaction });
+        await queryInterface.bulkInsert('orders', orders, { transaction });
 
         // Fetch back the inserted orders (latest N)
         const insertedOrders = await queryInterface.sequelize.query(
-          "SELECT id, restaurantId FROM orders ORDER BY id DESC LIMIT ?",
+          'SELECT id, restaurantId FROM orders ORDER BY id DESC LIMIT ?',
           {
             replacements: [BATCH_SIZE],
             type: queryInterface.sequelize.QueryTypes.SELECT,
@@ -97,7 +97,7 @@ module.exports = {
 
           // Update total price for this order
           await queryInterface.sequelize.query(
-            `UPDATE orders SET totalPrice = ? WHERE id = ?`,
+            `UPDATE orders SET price = ? WHERE id = ?`,
             {
               replacements: [parseFloat(total.toFixed(2)), order.id],
               transaction,
@@ -106,7 +106,9 @@ module.exports = {
         }
 
         // Insert batch of items
-        await queryInterface.bulkInsert("order_items", orderItems, { transaction });
+        await queryInterface.bulkInsert('order_items', orderItems, {
+          transaction,
+        });
 
         orderCount += orders.length;
         orderItemCount += orderItems.length;
@@ -122,7 +124,7 @@ module.exports = {
       );
     } catch (error) {
       await transaction.rollback();
-      console.error("❌ Seeder failed:", error.message);
+      console.error('❌ Seeder failed:', error.message);
       throw error;
     }
   },
@@ -130,8 +132,8 @@ module.exports = {
   async down(queryInterface) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.bulkDelete("order_items", null, { transaction });
-      await queryInterface.bulkDelete("orders", null, { transaction });
+      await queryInterface.bulkDelete('order_items', null, { transaction });
+      await queryInterface.bulkDelete('orders', null, { transaction });
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();

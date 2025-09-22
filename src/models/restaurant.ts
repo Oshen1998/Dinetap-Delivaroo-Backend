@@ -18,7 +18,6 @@ interface RestaurantAttributes {
   updatedAt?: Date | undefined;
 }
 
-// 💡 Corrected: Add 'long' and 'lat' to the list of optional attributes
 export interface RestaurantCreationAttributes
   extends Optional<
     RestaurantAttributes,
