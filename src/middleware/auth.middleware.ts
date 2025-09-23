@@ -1,13 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { ERROR_MESSAGES } from '../common/constants';
 import { jwtConfig } from '../config/jwt';
 import { models } from '../models';
-import { ERROR_MESSAGES } from '../common/constants';
+import { User, UserRole } from '../models/user';
 import {
   unauthorizedResponse,
   unprocessableEntityResponse,
 } from './response-handler.middleware';
-import { User, UserRole } from '../models/user';
 
 declare global {
   namespace Express {
@@ -26,6 +26,7 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   const token = req.headers['authorization']?.split(' ')[1];
+
   if (!token) return unauthorizedResponse(res, ERROR_MESSAGES.MISSING_TOKEN);
 
   try {
@@ -33,13 +34,16 @@ export const authenticate = async (
       token,
       jwtConfig.accessSecret || ''
     ) as jwt.JwtPayload;
+
     const user = await models.User.findByPk(payload.sub);
     if (!user)
       return unprocessableEntityResponse(res, ERROR_MESSAGES.INVALID_TOKEN);
-    req.user = { id: user.id, email: user.email };
+    req.user = user;
     next();
+    return;
   } catch (err) {
-    return unprocessableEntityResponse(res, ERROR_MESSAGES.INVALID_TOKEN);
+    unprocessableEntityResponse(res, ERROR_MESSAGES.INVALID_TOKEN);
+    return;
   }
 };
 
@@ -58,5 +62,6 @@ export const authorization = (allowedRoles: UserRole[]) => {
       );
     }
     next();
+    return;
   };
 };

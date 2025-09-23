@@ -10,15 +10,17 @@ module.exports = {
     try {
       // First, get all restaurant IDs to use as foreign keys
       const restaurants = await queryInterface.sequelize.query(
-        "SELECT id FROM restaurants",
-        { 
+        'SELECT id FROM restaurants',
+        {
           type: queryInterface.sequelize.QueryTypes.SELECT,
-          transaction 
+          transaction,
         }
       );
 
       if (!restaurants.length) {
-        console.warn("⚠️ No restaurants found - please run restaurants seeder first");
+        console.warn(
+          '⚠️ No restaurants found - please run restaurants seeder first'
+        );
         await transaction.rollback();
         return;
       }
@@ -27,13 +29,16 @@ module.exports = {
 
       // Check existing categories before insert
       const existingCount = await queryInterface.sequelize.query(
-        "SELECT COUNT(*) as count FROM categories",
-        { 
+        'SELECT COUNT(*) as count FROM categories',
+        {
           type: queryInterface.sequelize.QueryTypes.SELECT,
-          transaction 
+          transaction,
         }
       );
-      console.log("🔍 Existing categories before insert:", existingCount[0].count);
+      console.log(
+        '🔍 Existing categories before insert:',
+        existingCount[0].count
+      );
 
       const categories = [];
 
@@ -55,11 +60,12 @@ module.exports = {
 
       // Create categories for each restaurant
       for (const restaurant of restaurants) {
-        // Each restaurant gets 4-6 random categories
-        const categoryCount = faker.number.int({ min: 4, max: 6 });
+        // Each restaurant gets a maximum of 7 unique categories (min: 4, max: 7)
+        const categoryCount = faker.number.int({ min: 4, max: 7 });
         const shuffledCategories = faker.helpers.shuffle(categoryNames);
+        // Ensure we take at most 7 unique categories from the shuffled list
         const selectedCategories = shuffledCategories.slice(0, categoryCount);
-        
+
         selectedCategories.forEach((categoryName, index) => {
           categories.push({
             restaurantId: restaurant.id,
@@ -72,38 +78,39 @@ module.exports = {
       }
 
       // Insert categories with transaction
-      const result = await queryInterface.bulkInsert('categories', categories, { transaction });
-      console.log("✅ Bulk insert result:", result);
+      const result = await queryInterface.bulkInsert('categories', categories, {
+        transaction,
+      });
+      console.log('✅ Bulk insert result:', result);
       console.log(`✅ Successfully inserted ${categories.length} categories`);
 
       // Verify insertion
       const count = await queryInterface.sequelize.query(
-        "SELECT COUNT(*) as count FROM categories",
-        { 
+        'SELECT COUNT(*) as count FROM categories',
+        {
           type: queryInterface.sequelize.QueryTypes.SELECT,
-          transaction 
+          transaction,
         }
       );
-      console.log("🔍 Categories in database after insert:", count[0].count);
+      console.log('🔍 Categories in database after insert:', count[0].count);
 
       // Show sample of created categories
       const sampleCategories = await queryInterface.sequelize.query(
-        "SELECT c.name, c.position, r.name as restaurant_name FROM categories c JOIN restaurants r ON c.restaurantId = r.id ORDER BY r.id, c.position LIMIT 10",
-        { 
+        'SELECT c.name, c.position, r.name as restaurant_name FROM categories c JOIN restaurants r ON c.restaurantId = r.id ORDER BY r.id, c.position LIMIT 10',
+        {
           type: queryInterface.sequelize.QueryTypes.SELECT,
-          transaction 
+          transaction,
         }
       );
-      console.log("📋 Sample categories created:", sampleCategories);
+      console.log('📋 Sample categories created:', sampleCategories);
 
       // Commit the transaction
       await transaction.commit();
-      console.log("✅ Transaction committed successfully");
-
+      console.log('Transaction committed successfully');
     } catch (error) {
       await transaction.rollback();
-      console.error("❌ Error inserting categories:", error);
-      console.error("Error details:", error.message);
+      console.error('Error inserting categories:', error);
+      console.error('Error details:', error.message);
       throw error;
     }
   },
@@ -114,11 +121,11 @@ module.exports = {
     try {
       await queryInterface.bulkDelete('categories', null, { transaction });
       await transaction.commit();
-      console.log("✅ Successfully deleted all categories");
+      console.log('Successfully deleted all categories');
     } catch (error) {
       await transaction.rollback();
-      console.error("❌ Error deleting categories:", error);
+      console.error('Error deleting categories:', error);
       throw error;
     }
-  }
+  },
 };

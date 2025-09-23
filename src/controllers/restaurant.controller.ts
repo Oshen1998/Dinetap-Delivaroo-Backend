@@ -9,6 +9,12 @@ import {
 } from '../middleware/response-handler.middleware';
 import { Restaurant } from '../models/restaurant';
 import {
+  createRestaurant,
+  deleteRestaurant,
+  findRestaurantById,
+  updateRestaurant,
+} from '../services/restaurant.service';
+import {
   createRestaurantSchema,
   updateRestaurantSchema,
 } from '../validations/restaurant.validation';
@@ -50,50 +56,65 @@ export default {
     }
   },
 
-  async create(req: Request, res: Response) {
+  async addNewRestaurant(req: Request, res: Response) {
     try {
       const parsed = createRestaurantSchema.safeParse(req.body);
 
       if (!parsed.success)
         return badRequestResponse(res, parsed.error.toString());
 
-      const { name, address, description } = parsed.data;
-      const restaurant = await Restaurant.create({
-        name,
-        address,
-        description: description ?? null,
-      });
-      return successResponse(res, restaurant, 'Successfully Created!');
+      const restaurant = await createRestaurant(parsed.data);
+      successResponse(res, restaurant, 'Successfully Created!');
+      return;
     } catch (err) {
-      return unprocessableEntityResponse(res);
+      unprocessableEntityResponse(res);
+      return;
     }
   },
 
-  async update(req: Request, res: Response) {
+  async updateRestaurantDetails(req: Request, res: Response) {
     try {
       const parsed = updateRestaurantSchema.safeParse(req.body);
 
       if (!parsed.success)
         return badRequestResponse(res, parsed.error.toString());
 
-      const restaurant = await Restaurant.findByPk(req.params['id']);
+      const id = req.params['id'];
+      if (!id)
+        return unprocessableEntityResponse(res, 'Restaurant Id is Required!');
+
+      const restaurant = await findRestaurantById(id);
 
       if (!restaurant) return notFoundErrorResponse(res, 'Not Found');
-      await restaurant.update(req.body);
-      return successResponse(res, restaurant);
+
+      const updated = await updateRestaurant(req.body, id);
+      successResponse(res, updated);
+      return;
     } catch (err) {
-      return unprocessableEntityResponse(res);
+      unprocessableEntityResponse(res);
+      return;
     }
   },
 
-  async remove(req: Request, res: Response) {
+  async deleteRestaurantById(req: Request, res: Response) {
     try {
-      const restaurant = await Restaurant.findByPk(req.params['id']);
+      const id = req.params['id'];
+      if (!id)
+        return unprocessableEntityResponse(res, 'Restaurant Id is Required!');
+
+      const restaurant = await findRestaurantById(id);
       if (!restaurant) return notFoundErrorResponse(res, 'Not Found');
-      await restaurant.destroy();
-      res.status(204).send();
+
+      const deleted = await deleteRestaurant(id);
+      if (deleted[0] === 0) {
+        return notFoundErrorResponse(res, 'Not Found');
+      }
+
+      successResponse(res, null, 'Restaurant successfully deleted!');
+      return;
     } catch (err) {
-      serverErrorResponse(res);
+      unprocessableEntityResponse(res);
+      return;
     }
   },
 };

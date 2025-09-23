@@ -1,4 +1,9 @@
-import { DataTypes, Sequelize, Model, Optional } from 'sequelize';
+import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
+
+export enum DishStatus {
+  AVAILABLE = 'AVAILABLE',
+  UNAVAILABLE = 'UNAVAILABLE',
+}
 
 export enum DishTags {
   VEG = 'VEG',
@@ -6,20 +11,28 @@ export enum DishTags {
   NEW = 'NEW',
 }
 
+type TagArray = string[];
+
 interface DishAttributes {
   id: number;
   categoryId: number;
   name: string;
-  description?: string;
+  description?: string | null | undefined;
   price: number;
   image?: string | null;
-  tags: DishTags[];
-  isAvailable: boolean;
-  isPopular: boolean;
+  tags: TagArray | undefined;
+  isAvailable: boolean | undefined;
+  isPopular: boolean | undefined;
+  status: DishStatus | undefined;
+  rate?: number | null | undefined;
+  restaurantId: number;
 }
 
 export interface DishCreationAttributes
-  extends Optional<DishAttributes, 'id' | 'tags' | 'isAvailable'> {}
+  extends Optional<
+    DishAttributes,
+    'id' | 'tags' | 'isAvailable' | 'isPopular' | 'rate' | 'status'
+  > {}
 
 export class Dish
   extends Model<DishAttributes, DishCreationAttributes>
@@ -28,12 +41,16 @@ export class Dish
   public id!: number;
   public categoryId!: number;
   public name!: string;
-  public description?: string;
+  public description?: string | null;
   public price!: number;
   public image?: string | null;
-  public tags!: DishTags[];
-  public isAvailable!: boolean;
-  public isPopular!: boolean;
+  public tags!: TagArray | undefined;
+  public isAvailable!: boolean | undefined;
+  public isPopular!: boolean | undefined;
+  public status!: DishStatus | undefined;
+  public rate?: number | null | undefined;
+  public restaurantId!: number;
+
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -82,6 +99,26 @@ export function initDish(sequelize: Sequelize) {
         allowNull: true,
         defaultValue: false,
       },
+      status: {
+        type: DataTypes.ENUM<DishStatus>(
+          DishStatus.AVAILABLE,
+          DishStatus.UNAVAILABLE
+        ),
+        allowNull: false,
+        defaultValue: DishStatus.AVAILABLE,
+      },
+      rate: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      restaurantId: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        references: {
+          model: 'restaurants',
+          key: 'id',
+        },
+      },
     },
     {
       tableName: 'dishes',
@@ -92,6 +129,9 @@ export function initDish(sequelize: Sequelize) {
         },
         {
           fields: ['name'],
+        },
+        {
+          fields: ['restaurantId'],
         },
       ],
     }

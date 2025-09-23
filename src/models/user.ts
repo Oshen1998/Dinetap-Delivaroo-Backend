@@ -1,5 +1,5 @@
-import { DataTypes, Sequelize, Model, Optional } from 'sequelize';
 import bcrypt from 'bcrypt';
+import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 
 export type UserRole = 'ADMIN' | 'CUSTOMER' | 'SUPER_ADMIN';
 
@@ -10,7 +10,7 @@ export interface UserAttributes {
   email: string;
   password: string;
   name: string;
-  phoneNumber?: string;
+  phoneNumber?: string | undefined;
   status?: UserStatus;
   role: UserRole;
   createdAt?: Date;

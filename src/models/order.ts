@@ -1,10 +1,10 @@
-import { DataTypes, Model, Sequelize, Optional } from 'sequelize';
+import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 
 interface OrderAttributes {
   id: number;
   userId: number;
   restaurantId: number;
-  totalPrice: number;
+  price: number;
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
 }
 
@@ -17,7 +17,7 @@ export class Order
   public id!: number;
   public userId!: number;
   public restaurantId!: number;
-  public totalPrice!: number;
+  public price!: number;
   public status!: 'pending' | 'confirmed' | 'completed' | 'cancelled';
 
   static associate(models: any) {
@@ -39,7 +39,7 @@ export const initOrder = (sequelize: Sequelize) => {
       },
       userId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
       restaurantId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
-      totalPrice: { type: DataTypes.FLOAT, allowNull: false },
+      price: { type: DataTypes.FLOAT, allowNull: false },
       status: {
         type: DataTypes.ENUM('pending', 'confirmed', 'completed', 'cancelled'),
         defaultValue: 'pending',

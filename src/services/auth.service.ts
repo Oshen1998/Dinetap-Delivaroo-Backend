@@ -11,13 +11,22 @@ export const createUser = async (
   name: string,
   phoneNumber?: string
 ) => {
-  return await models.User.create({ email, password, name, phoneNumber });
+  return await models.User.create({
+    email,
+    password,
+    name,
+    phoneNumber: phoneNumber,
+  });
+};
+
+export const findByUserId = async (id: string | number) => {
+  return await models.User.findByPk(id);
 };
 
 export const updateUserDetails = async (
   id: string,
-  email?: string,
-  name?: string,
+  email: string,
+  name: string,
   phoneNumber?: string
 ) => {
   return await models.User.update(
