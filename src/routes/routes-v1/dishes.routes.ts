@@ -1,29 +1,30 @@
-import { Router } from "express";
-import { USER_ROLES } from "../../common/enums";
-import dishesController from "../../controllers/dishes.controller";
-import { authenticate, authorization } from "../../middleware/auth.middleware";
+import { Router } from 'express';
+import { USER_ROLES } from '../../common/enums';
+import dishesController from '../../controllers/dishes.controller';
+import { authenticate, authorization } from '../../middleware/auth.middleware';
 
 const router = Router();
 
 router.post(
-  "/",
+  '/',
   authenticate,
   authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
-  dishesController.createNewDish,
+  dishesController.createNewDish
 );
-router.get("/", authenticate, dishesController.getAll);
-router.get("/:id", authenticate, dishesController.getDishById);
+router.get('/restaurant', authenticate, dishesController.RestaurantWiseDishes);
+router.get('/', authenticate, dishesController.getAll);
+router.get('/:id', authenticate, dishesController.getDishById);
 router.put(
-  "/:id",
+  '/:id',
   authenticate,
   authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
-  dishesController.updateDishDetails,
+  dishesController.updateDishDetails
 );
 router.delete(
-  "/:id",
+  '/:id',
   authenticate,
   authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
-  dishesController.deleteDishById,
+  dishesController.deleteDishById
 );
 
 export default router;

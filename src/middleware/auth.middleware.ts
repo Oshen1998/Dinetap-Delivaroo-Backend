@@ -26,6 +26,7 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   const token = req.headers['authorization']?.split(' ')[1];
+
   if (!token) return unauthorizedResponse(res, ERROR_MESSAGES.MISSING_TOKEN);
 
   try {
@@ -33,6 +34,7 @@ export const authenticate = async (
       token,
       jwtConfig.accessSecret || ''
     ) as jwt.JwtPayload;
+
     const user = await models.User.findByPk(payload.sub);
     if (!user)
       return unprocessableEntityResponse(res, ERROR_MESSAGES.INVALID_TOKEN);

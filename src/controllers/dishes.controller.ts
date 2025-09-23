@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { CategoryWithDishes } from '../common/types';
 import {
   badRequestResponse,
   notFoundErrorResponse,
@@ -6,6 +7,8 @@ import {
   successResponse,
   unprocessableEntityResponse,
 } from '../middleware/response-handler.middleware';
+import { models } from '../models';
+import { Dish, DishStatus } from '../models/dish';
 import {
   allDishes,
   createDish,
@@ -13,6 +16,7 @@ import {
   findDishById,
   updateDish,
 } from '../services/dish.service';
+import { generateRandomEmoji, generateRandomNumber } from '../utils';
 import {
   createDishSchema,
   updateDishSchema,
@@ -128,6 +132,70 @@ export default {
     } catch (err) {
       unprocessableEntityResponse(res);
       return;
+    }
+  },
+
+  async RestaurantWiseDishes(req: Request, res: Response) {
+    const { restaurantId } = req.query;
+
+    if (!restaurantId) {
+      return unprocessableEntityResponse(
+        res,
+        'restaurantId query parameter is required.'
+      );
+    }
+
+    try {
+      const categoriesWithDishes = (await models.Category.findAll({
+        where: { restaurantId: Number(restaurantId) },
+        include: [
+          {
+            model: models.Dish,
+            as: 'dishes',
+            where: { status: DishStatus.AVAILABLE },
+            required: false,
+          },
+        ],
+        order: [
+          ['name', 'ASC'],
+          [{ model: models.Dish, as: 'dishes' }, 'name', 'ASC'],
+        ],
+      })) as unknown as CategoryWithDishes[];
+
+      const formattedResponse = categoriesWithDishes.map(category => {
+        const categoryData = category.toJSON();
+
+        const dishes = Array.isArray(categoryData.dishes)
+          ? categoryData.dishes.map((dish: Dish, index: number) => ({
+              dishId: dish.id,
+              dishName: dish.name,
+              dishRate: dish.rate ?? 0,
+              price: dish.price,
+              currency: 'LKR',
+              calories: `${generateRandomNumber(30, 120)} kcal`,
+              description: dish?.description,
+              imageId: generateRandomNumber(1, 10),
+              tags: dish?.tags && index !== 0 && index / 3 ? dish.tags[0] : '',
+            }))
+          : [];
+
+        return {
+          categoryId: categoryData.id,
+          categoryName: generateRandomEmoji(categoryData.name),
+          dishes: dishes,
+        };
+      });
+
+      if (!formattedResponse || formattedResponse.length === 0) {
+        return res.status(404).json({
+          message: 'No categories or dishes found for this restaurant.',
+        });
+      }
+
+      res.status(200).json(formattedResponse);
+    } catch (error) {
+      console.error('Error fetching categories and dishes:', error);
+      res.status(500).json({ error: 'An unexpected error occurred.' });
     }
   },
 };

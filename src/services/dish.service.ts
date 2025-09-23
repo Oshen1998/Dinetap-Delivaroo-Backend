@@ -20,6 +20,10 @@ export const findDishById = async (id: string | number) => {
   return await models.Dish.findByPk(id);
 };
 
+export const findByRestaurantQueryParam = async (id: string | number) => {
+  return await models.Dish.findOne({ where: { restaurantId: id } });
+};
+
 export const updateDish = async (
   body: z.infer<typeof updateDishSchema>,
   id: string | number

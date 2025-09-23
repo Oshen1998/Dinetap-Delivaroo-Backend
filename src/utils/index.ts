@@ -21,3 +21,20 @@ export const removeUndefined = <T extends Record<string, any>>(
     Object.entries(obj).filter(([, value]) => value !== undefined)
   ) as Partial<T>;
 };
+
+export const generateRandomNumber = (
+  start: number,
+  between: number
+): number => {
+  return Math.floor(Math.random() * between + start);
+};
+
+export const generateRandomEmoji = (text: string): string => {
+  const emojis = ['😀', '🥳', '🚀', '🌟', '🌈', '💯', '✨', '🎉', '💡', '🔥'];
+
+  const randomIndex1 = Math.floor(generateRandomNumber(0, emojis.length));
+
+  const emoji1 = emojis[randomIndex1];
+
+  return `${emoji1} ${text} ${emoji1}`;
+};

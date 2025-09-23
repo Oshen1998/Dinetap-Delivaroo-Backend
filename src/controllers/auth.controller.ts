@@ -67,6 +67,9 @@ export const login = async (req: Request, res: Response) => {
     if (!user)
       return unauthorizedResponse(res, ERROR_MESSAGES.INVALID_CREDENTIALS);
 
+    if (user.status === 'INACTIVE')
+      return unauthorizedResponse(res, 'You account is unavailable!');
+
     const ok = await user.comparePassword(password);
     if (!ok)
       return unauthorizedResponse(res, ERROR_MESSAGES.INVALID_CREDENTIALS);
