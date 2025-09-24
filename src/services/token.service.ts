@@ -1,11 +1,11 @@
-import jwt, { SignOptions } from 'jsonwebtoken';
-import { jwtConfig } from '../config/jwt';
 import crypto from 'crypto';
+import jwt, { SignOptions } from 'jsonwebtoken';
+import { ERROR_MESSAGES } from '../common/constants';
+import { jwtConfig } from '../config/jwt';
 import { models } from '../models';
 import { RefreshToken } from '../models/refreshToken';
 import { User } from '../models/user';
 import { msFromStr } from '../utils';
-import { ERROR_MESSAGES } from '../common/constants';
 
 const createRandomToken = () => {
   return crypto.randomBytes(64).toString('hex');
@@ -72,7 +72,9 @@ export const rotateRefreshToken = async (token: string) => {
   existing.replacedByToken = hashedNew;
   await existing.save();
 
-  const accessToken = generateAccessToken(user);
+  const accessToken = await generateAccessToken(user);
 
-  return { accessToken, refreshToken: newToken, user };
+  console.log(accessToken);
+
+  return { accessToken: accessToken, refreshToken: newToken, user };
 };

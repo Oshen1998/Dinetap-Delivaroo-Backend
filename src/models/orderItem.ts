@@ -1,6 +1,6 @@
-import { DataTypes, Sequelize, Model, Optional } from 'sequelize';
+import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 
-interface OrderItemAttributes {
+export interface OrderItemAttributes {
   id: number;
   orderId: number;
   dishId: number;

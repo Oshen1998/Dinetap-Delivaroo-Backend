@@ -44,8 +44,10 @@ export const userDeleted = async (userId: number) => {
   );
 };
 
-export const getAllActiveMembers = async () => {
+export const getAllActiveMembers = async (limit: number, offset: number) => {
   return models.User.findAll({
+    limit,
+    offset,
     where: {
       status: 'ACTIVE',
     },
