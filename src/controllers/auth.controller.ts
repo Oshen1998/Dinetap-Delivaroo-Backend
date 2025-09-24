@@ -144,8 +144,13 @@ export const updateUserDetailsById = async (req: Request, res: Response) => {
 
 export const getAllActiveUsers = async (req: Request, res: Response) => {
   try {
-    const activeUsers = await getAllActiveMembers();
-    return activeUsers;
+    const page = parseInt(req.query['page'] as string) || 1;
+    const limit = parseInt(req.query['size'] as string) || 20;
+    const offset = (page - 1) * limit;
+
+    const activeUsers = await getAllActiveMembers(limit, offset);
+    successResponse(res, activeUsers);
+    return;
   } catch (error) {
     if (error instanceof Error) {
       serverErrorResponse(res, error.message);
@@ -177,7 +182,10 @@ export const refreshToken = async (req: Request, res: Response) => {
     const { accessToken, refreshToken: newRefresh } =
       result as IRefreshTokenResult;
 
-    successResponse(res, { accessToken, refreshToken: newRefresh });
+    successResponse(res, {
+      accessToken: accessToken,
+      refreshToken: newRefresh,
+    });
     return;
   } catch (error) {
     if (error instanceof Error) {
