@@ -171,7 +171,7 @@ export default {
               dishName: dish.name,
               dishRate: dish.rate ?? 0,
               price: dish.price,
-              currency: 'LKR',
+              currency: '£',
               calories: `${generateRandomNumber(30, 120)} kcal`,
               description: dish?.description,
               imageId: generateRandomNumber(1, 10),
