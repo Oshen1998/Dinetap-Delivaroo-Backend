@@ -148,3 +148,41 @@ export const getAllOrders = async (page = 1, limit = 10) => {
     throw new Error(`Failed to get all orders: ${error}`);
   }
 };
+
+export const getRestaurantWiseOrders = async (
+  page = 1,
+  limit = 10,
+  restaurantId: number
+) => {
+  try {
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await Order.findAndCountAll({
+      include: [
+        {
+          model: Restaurant,
+          as: 'restaurant',
+        },
+        {
+          model: OrderItem,
+          as: 'items',
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+      where: {
+        restaurantId: restaurantId,
+      },
+      limit,
+      offset,
+    });
+
+    return {
+      orders: rows,
+      totalCount: count,
+      currentPage: page,
+      totalPages: Math.ceil(count / limit),
+    };
+  } catch (error) {
+    throw new Error(`Failed to get all orders: ${error}`);
+  }
+};

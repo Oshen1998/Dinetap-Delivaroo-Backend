@@ -1,22 +1,28 @@
 import { Router } from 'express';
 import { USER_ROLES } from '../../common/enums';
-import reportController from '../../controllers/report.controller';
+import orderController from '../../controllers/order.controller';
 import { authenticate, authorization } from '../../middleware/auth.middleware';
 
 const router = Router();
 
+router.post('/', orderController.createOrder);
+
 router.get(
-  '/sales',
+  '/',
   authenticate,
   authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
-  reportController.getTotalSales
+  orderController.getAllOrders
 );
 
 router.get(
-  '/top-selling',
+  '/:id',
   authenticate,
   authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
-  reportController.getTopSellingItems
+  orderController.getAllRestaurantWiseOrders
 );
+
+router.get('/:id', orderController.getOrderById);
+
+router.delete('/:id', orderController.deleteOrder);
 
 export default router;
