@@ -21,8 +21,13 @@ router.get(
   orderController.getAllRestaurantWiseOrders
 );
 
-router.get('/:id', orderController.getOrderById);
+router.get('/:id', authenticate, orderController.getOrderById);
 
-router.delete('/:id', orderController.deleteOrder);
+router.delete(
+  '/:id',
+  authenticate,
+  authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
+  orderController.deleteOrder
+);
 
 export default router;

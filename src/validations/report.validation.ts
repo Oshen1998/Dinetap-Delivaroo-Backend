@@ -22,26 +22,12 @@ export const topItemsQuerySchema = z.object({
   metric: z.enum(['quantity', 'revenue']),
   status: z
     .string()
-    .transform(val => val.split(','))
-    .optional(),
-  startDate: z
-    .string()
-    .datetime()
-    .transform(val => new Date(val))
-    .optional(),
-  endDate: z
-    .string()
-    .datetime()
-    .transform(val => new Date(val))
-    .optional(),
+    .optional()
+    .transform(val => (val ? val.split(',') : [])),
+  startDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
   sortBy: z.string().optional(),
   sortOrder: z.enum(['ASC', 'DESC']).optional(),
-  page: z
-    .string()
-    .transform(val => parseInt(val, 10))
-    .optional(),
-  limit: z
-    .string()
-    .transform(val => parseInt(val, 10))
-    .optional(),
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().optional(),
 });

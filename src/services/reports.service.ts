@@ -1,7 +1,7 @@
 import { Op, Sequelize } from 'sequelize';
 import { ReportQuery } from '../common/interfaces/reports.interface';
+import { models } from '../models';
 import { Order } from '../models/order';
-import { OrderItem } from '../models/orderItem';
 
 export const totalSalesByPeriod = async (
   period: 'day' | 'week' | 'month',
@@ -54,14 +54,18 @@ export const topSellingItems = async (
         [
           Sequelize.fn(
             'SUM',
-            Sequelize.col(metric === 'quantity' ? 'quantity' : 'price')
+            // Use Sequelize.col with the correct column path, which includes the alias
+            Sequelize.col(
+              metric === 'quantity' ? 'OrderItem.quantity' : 'OrderItem.price'
+            )
           ),
           metric,
         ],
       ],
       include: [
         {
-          model: Order,
+          model: models.Order,
+          as: 'order',
           attributes: [],
           where: {
             ...(status && { status: { [Op.in]: status } }),
@@ -72,7 +76,7 @@ export const topSellingItems = async (
           },
         },
       ],
-      group: ['dishId'],
+      group: ['dishId', 'order.id'],
       order: [[Sequelize.literal(metric), sortOrder || 'DESC']],
     };
 
@@ -81,7 +85,7 @@ export const topSellingItems = async (
       options.offset = page ? (page - 1) * limit : 0;
     }
 
-    return await OrderItem.findAll(options);
+    return await models.OrderItem.findAll(options);
   } catch (error) {
     console.error('Error in topSellingItems:', error);
     throw error;

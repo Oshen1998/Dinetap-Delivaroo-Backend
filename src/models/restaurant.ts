@@ -3,8 +3,21 @@ import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 type TagArray = string[];
 export type RestaurantStatus = 'ACTIVE' | 'INACTIVE';
 
-interface RestaurantAttributes {
+export interface RestaurantAttributes {
   id: number;
+  name: string;
+  status: RestaurantStatus;
+  description?: string | null | undefined;
+  address?: string | null | undefined;
+  currencyCode?: string | undefined;
+  tags?: TagArray | undefined;
+  rate?: number | null | undefined;
+  long?: number | null | undefined;
+  lat?: number | null | undefined;
+  createdAt?: Date | undefined;
+  updatedAt?: Date | undefined;
+}
+export interface IRestaurant {
   name: string;
   status: RestaurantStatus;
   description?: string | null | undefined;

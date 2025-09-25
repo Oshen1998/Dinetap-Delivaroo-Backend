@@ -1,29 +1,34 @@
-import { Router } from "express";
-import { USER_ROLES } from "../../common/enums";
-import restaurantController from "../../controllers/restaurant.controller";
-import { authenticate, authorization } from "../../middleware/auth.middleware";
+import { Router } from 'express';
+import { USER_ROLES } from '../../common/enums';
+import restaurantController from '../../controllers/restaurant.controller';
+import { authenticate, authorization } from '../../middleware/auth.middleware';
 
 const router = Router();
 
 router.post(
-  "/",
+  '/',
   authenticate,
   authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
-  restaurantController.addNewRestaurant,
+  restaurantController.addNewRestaurant
 );
-router.get("/", authenticate, restaurantController.getAll);
-router.get("/:id", authenticate, restaurantController.getById);
+router.get('/', authenticate, restaurantController.getAll);
+router.get(
+  '/:id',
+  authenticate,
+  authorization([USER_ROLES.ADMIN, USER_ROLES.CUSTOMER]),
+  restaurantController.getById
+);
 router.put(
-  "/:id",
+  '/:id',
   authenticate,
   authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
-  restaurantController.updateRestaurantDetails,
+  restaurantController.updateRestaurantDetails
 );
 router.delete(
-  "/:id",
+  '/:id',
   authenticate,
   authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
-  restaurantController.deleteRestaurantById,
+  restaurantController.deleteRestaurantById
 );
 
 export default router;

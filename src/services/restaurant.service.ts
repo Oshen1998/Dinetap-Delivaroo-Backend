@@ -1,7 +1,7 @@
 import { models } from '../models';
-import { Restaurant, RestaurantCreationAttributes } from '../models/restaurant';
+import { IRestaurant, Restaurant } from '../models/restaurant';
 
-export const createRestaurant = async (body: RestaurantCreationAttributes) => {
+export const createRestaurant = async (body: IRestaurant) => {
   return await models.Restaurant.create({
     ...body,
   });

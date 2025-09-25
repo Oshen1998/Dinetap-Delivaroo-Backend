@@ -4,6 +4,7 @@ import {
   notFoundErrorResponse,
   serverErrorResponse,
   successResponse,
+  unprocessableEntityResponse,
 } from '../middleware/response-handler.middleware';
 import {
   createOrder,
@@ -72,12 +73,21 @@ export default {
     }
   },
 
+  // This is Hard Delete - Usually We are not doing this
   async deleteOrder(req: Request, res: Response) {
     try {
-      const { id } = orderIdSchema.parse(req.params);
-      await deleteOrder(id);
-      successResponse(res, { id });
+      const validatedData = orderIdSchema.parse({
+        id: Number(req.params['id']),
+      });
+
+      if (!validatedData) {
+        unprocessableEntityResponse(res, 'Not a Valid Id');
+      }
+      await deleteOrder(validatedData.id);
+      successResponse(res, 'Successfully Deleted!');
     } catch (error) {
+      console.log(error);
+
       badRequestResponse(res);
     }
   },

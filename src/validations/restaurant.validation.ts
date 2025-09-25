@@ -5,7 +5,7 @@ export const restaurantStatusSchema = z.enum(['ACTIVE', 'INACTIVE']);
 export const tagArraySchema = z.array(z.string());
 
 export const createRestaurantSchema = z.object({
-  id: z.number().positive(),
+  id: z.number().positive().optional(),
   name: z.string().min(1, 'Name is required'),
   status: restaurantStatusSchema,
   description: z.string().nullable().optional(),
@@ -15,8 +15,8 @@ export const createRestaurantSchema = z.object({
   rate: z.number().nullable().optional(),
   long: z.number().optional(),
   lat: z.number().optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
 });
 
 export const updateRestaurantSchema = createRestaurantSchema.partial();
