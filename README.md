@@ -31,4 +31,4 @@ npm install
 cp .env.example .env
 
 
-AI TOOLS - CLAUD AI & CHATGPT
+AI TOOLS - CLAUD AI & CHATGPT (For Developments)
