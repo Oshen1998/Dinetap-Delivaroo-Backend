@@ -22,7 +22,11 @@ import {
   generateRefreshToken,
   rotateRefreshToken,
 } from '../services/token.service';
-import { loginSchema, signupSchema } from '../validations/auth.validation';
+import {
+  loginSchema,
+  signupSchema,
+  userUpdateSchema,
+} from '../validations/auth.validation';
 import { tokenSchema } from '../validations/token.validations';
 
 export const userRegistration = async (req: Request, res: Response) => {
@@ -93,7 +97,7 @@ export const login = async (req: Request, res: Response) => {
 export const deleteUserById = async (req: Request, res: Response) => {
   try {
     const [affectedRows] = await userDeleted(Number(req.params['id']));
-    return affectedRows;
+    successResponse(res, affectedRows);
   } catch (error) {
     if (error instanceof Error) {
       serverErrorResponse(res, error.message);
@@ -106,7 +110,7 @@ export const deleteUserById = async (req: Request, res: Response) => {
 };
 
 export const updateUserDetailsById = async (req: Request, res: Response) => {
-  const parsed = signupSchema.safeParse(req.body);
+  const parsed = userUpdateSchema.safeParse(req.body);
 
   if (!parsed.success) return badRequestResponse(res, parsed.error.toString());
 
@@ -119,7 +123,7 @@ export const updateUserDetailsById = async (req: Request, res: Response) => {
     const isExist = await findByUserId(id);
 
     if (!isExist) {
-      unprocessableEntityResponse(res);
+      unprocessableEntityResponse(res, 'User not Exist');
       return;
     }
 

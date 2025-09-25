@@ -47,9 +47,10 @@ export default {
       const parsed = createDishSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        return badRequestResponse(res, parsed.error.errors.toString());
+        console.log(parsed.error);
+        badRequestResponse(res, parsed.error.errors.toString());
+        return;
       }
-
       const newDish = await createDish(parsed.data);
       successResponse(res, newDish, 'Dish successfully created!');
       return;
@@ -100,7 +101,7 @@ export default {
         return notFoundErrorResponse(res, 'Dish not found.');
       }
 
-      const updatedDish = await updateDish(parsed.data, id);
+      const [updatedDish] = await updateDish(parsed.data, id);
       successResponse(res, updatedDish);
       return;
     } catch (err) {
