@@ -10,6 +10,7 @@ import {
   deleteOrder,
   getAllOrders,
   getOrderById,
+  getRestaurantWiseOrders,
 } from '../services/order.service';
 import {
   orderCreationSchema,
@@ -29,9 +30,29 @@ export default {
 
   async getAllOrders(req: Request, res: Response) {
     try {
-      // TODO: add pagination
-      const orders = await getAllOrders();
-      res.status(200).json(orders);
+      const page = parseInt(req.query['page'] as string) || 1;
+      const limit = parseInt(req.query['size'] as string) || 10;
+
+      const orders = await getAllOrders(page, limit);
+
+      successResponse(res, orders);
+    } catch (error) {
+      if (error instanceof Error) serverErrorResponse(res, error.message);
+    }
+  },
+
+  async getAllRestaurantWiseOrders(req: Request, res: Response) {
+    try {
+      const restaurantId = req.params['id'];
+      const page = parseInt(req.query['page'] as string) || 1;
+      const limit = parseInt(req.query['size'] as string) || 10;
+
+      const orders = await getRestaurantWiseOrders(
+        page,
+        limit,
+        Number(restaurantId)
+      );
+      successResponse(res, orders);
     } catch (error) {
       if (error instanceof Error) serverErrorResponse(res, error.message);
     }

@@ -1,61 +1,56 @@
 import { Request, Response } from 'express';
-import { Op } from 'sequelize';
+import { z } from 'zod';
 import {
   badRequestResponse,
   serverErrorResponse,
   successResponse,
 } from '../middleware/response-handler.middleware';
-import { Order } from '../models/order';
-import { Restaurant } from '../models/restaurant';
+import {
+  topSellingItems,
+  totalSalesByPeriod,
+} from '../services/reports.service';
+import {
+  salesQuerySchema,
+  topItemsQuerySchema,
+} from '../validations/report.validation';
 
 export default {
-  async salesReport(req: Request, res: Response) {
+  async getTotalSales(req: Request, res: Response) {
+    console.log(req.query, 'getTotalSales');
+
     try {
-      const { from, to } = req.query;
-
-      const where: any = {};
-      if (from && to) {
-        const fromDate = new Date(from as string);
-        const toDate = new Date(to as string);
-
-        if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
-          badRequestResponse(res);
-        }
-
-        toDate.setHours(23, 59, 59, 999);
-
-        where.createdAt = {
-          [Op.between]: [fromDate, toDate],
-        };
-      }
-
-      const report = await Order.findAll({
-        where,
-        attributes: [
-          'restaurantId',
-          [
-            Order.sequelize!.fn('COUNT', Order.sequelize!.col('Order.id')),
-            'totalOrders',
-          ],
-          [
-            Order.sequelize!.fn(
-              'SUM',
-              Order.sequelize!.col('Order.totalPrice')
-            ),
-            'totalRevenue',
-          ],
-        ],
-        include: [
-          {
-            model: Restaurant,
-            attributes: ['id', 'name'],
-          },
-        ],
-        group: ['Order.restaurantId', 'Restaurant.id'],
+      const parsed = salesQuerySchema.parse(req.query);
+      const data = await totalSalesByPeriod(parsed.period, {
+        ...(parsed.status ? { status: parsed.status } : {}),
+        ...(parsed.startDate ? { startDate: parsed.startDate } : {}),
+        ...(parsed.endDate ? { endDate: parsed.endDate } : {}),
       });
+      successResponse(res, data);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        badRequestResponse(res, error.message);
+      }
+      serverErrorResponse(res);
+    }
+  },
 
-      successResponse(res, report);
-    } catch (err) {
+  async getTopSellingItems(req: Request, res: Response) {
+    try {
+      const parsed = topItemsQuerySchema.parse(req.query);
+      const data = await topSellingItems(parsed.metric, {
+        ...(parsed.status ? { status: parsed.status } : {}),
+        ...(parsed.startDate ? { startDate: parsed.startDate } : {}),
+        ...(parsed.endDate ? { endDate: parsed.endDate } : {}),
+        ...(parsed.sortBy ? { sortBy: parsed.sortBy } : {}),
+        ...(parsed.sortOrder ? { sortOrder: parsed.sortOrder } : {}),
+        ...(parsed.page ? { page: parsed.page } : {}),
+        ...(parsed.limit ? { limit: parsed.limit } : {}),
+      });
+      successResponse(res, data);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        badRequestResponse(res, error.message);
+      }
       serverErrorResponse(res);
     }
   },
