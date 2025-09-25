@@ -1,5 +1,5 @@
-import { Router } from "express";
-import { USER_ROLES } from "../../common/enums";
+import { Router } from 'express';
+import { USER_ROLES } from '../../common/enums';
 import {
   deleteUserById,
   getAllActiveUsers,
@@ -7,21 +7,32 @@ import {
   refreshToken,
   updateUserDetailsById,
   userRegistration,
-} from "../../controllers/auth.controller";
-import { authenticate, authorization } from "../../middleware/auth.middleware";
+} from '../../controllers/auth.controller';
+import { authenticate, authorization } from '../../middleware/auth.middleware';
 
 const router = Router();
 
-router.post("/signup", userRegistration);
-router.post("/login", login);
-router.post("/refresh", refreshToken);
+router.post('/signup', userRegistration);
+router.post('/login', login);
+router.post('/refresh', refreshToken);
 router.get(
-  "/all/users",
+  '/all/users',
   authenticate,
   authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
-  getAllActiveUsers,
+  getAllActiveUsers
 );
-router.delete("/:id", authenticate, deleteUserById);
-router.put("/:id", authenticate, updateUserDetailsById);
+router.delete(
+  '/:id',
+  authenticate,
+  authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
+  deleteUserById
+);
+
+router.put(
+  '/:id',
+  authenticate,
+  authorization([USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]),
+  updateUserDetailsById
+);
 
 export default router;
